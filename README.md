@@ -9,11 +9,17 @@ We have a type struct, called `big_int_t` that can be constructed using any of t
 ## TODO List
 
 [x] - Generic construction
+
 [x] - Addition
+
 [] - Subtraction
+
 [] - Comparisson
+
 [] - Multiplication
+
 [] - Division
+
 [] - Add examples
 
 ## Tests
