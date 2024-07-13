@@ -101,6 +101,12 @@ bigint_t bg_sub(bigint_t *a, bigint_t *b)
 {
     bigint_t res = {0};
 
+    if (bg_equals(a, b))
+    {
+        res.special = M_ZERO;
+        return res;
+    }
+
     // Handle special cases
     // 0 - 0 = 0
     if (a->special == M_ZERO && b->special == M_ZERO)
@@ -167,6 +173,20 @@ bigint_t bg_sub(bigint_t *a, bigint_t *b)
     }
 
     return res;
+}
+
+bool bg_equals(bigint_t *a, bigint_t *b)
+{
+    if (a == b) return true;
+    if (a->special == M_ZERO && b->special == M_ZERO) return true;
+    if (a->val_len != b->val_len) return false;
+
+    for (size_t i = 0; i < a->val_len; ++i)
+    {
+        if (a->val[i] != b->val[i]) return false;
+    }
+
+    return true;
 }
 
 static void __bg_copy(bigint_t *src, bigint_t *dst)

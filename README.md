@@ -12,9 +12,9 @@ We have a type struct, called `big_int_t` that can be constructed using any of t
 
 [x] - Addition
 
-[] - Subtraction
+[x] - Subtraction
 
-[] - Comparisson
+[x] - Comparisson
 
 [] - Multiplication
 

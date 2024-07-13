@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 
 typedef struct {
     uint8_t *val;
@@ -27,6 +28,8 @@ bigint_t bg_newu64(uint64_t x);
 bigint_t bg_newu32(uint32_t x);
 bigint_t bg_newu16(uint16_t x);
 bigint_t bg_newu8(uint8_t x);
+
+bool bg_equals(bigint_t *a, bigint_t *b);
 
 /**
  * Creates a new big integer containing the sum of a and b
