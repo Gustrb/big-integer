@@ -7,7 +7,7 @@
 #define __FAIL \
          __cleanup(); \
         exit(EXIT_FAILURE); \
-        return EXIT_FAILURE; \
+        return; \
 
 static bigint_t CLEANUP[100] = {0};
 static size_t num_of_clean = 0;
@@ -25,10 +25,8 @@ static inline void __cleanup(void)
     }
 }
 
-int main(void)
+static void zero_addition_case(void)
 {
-    fprintf(stdout, "[TEST]: Running sum.c\n");
-
     bigint_t zero = bg_new64(0);
     __push_to_cleanup(&zero);
     bigint_t x = bg_new64(10);
@@ -66,9 +64,16 @@ int main(void)
         fprintf(stderr, "[FAIL]: Adding 0 to 0 shold equal 0, got: %lld\n", v);
         __FAIL;
     }
+}
 
-    res = bg_add(&x, &x);
-    v = utils_int64_from_bi(&res);
+static void simple_addition_case(void)
+{
+    bigint_t x = bg_new64(10);
+    __push_to_cleanup(&x);
+
+    bigint_t res = bg_add(&x, &x);
+    int64_t v = utils_int64_from_bi(&res);
+
     bg_free(&res);
     if (v != 20)
     {
@@ -90,6 +95,14 @@ int main(void)
         fprintf(stderr, "[FAIL]: Adding 1 to 255 shold equal 256, got: %lld\n", v);
         __FAIL;
     }
+}
+
+int main(void)
+{
+    fprintf(stdout, "[TEST]: Running sum.c\n");
+
+    zero_addition_case();
+    simple_addition_case();
 
     fprintf(stdout, "[TEST]: sum.c... Ok\n");
     __cleanup();
