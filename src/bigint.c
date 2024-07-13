@@ -5,7 +5,7 @@
 #include "bigint.h"
 
 #define __IMPL_BG(type, v) \
-    bigint_t b; \
+    bigint_t b = {0}; \
     if (v == 0) { \
         b.special = M_ZERO; \
         return b; \
@@ -13,6 +13,7 @@
     b.val_len = sizeof(type); \
     b.val = malloc(b.val_len * sizeof(uint8_t)); \
     for (size_t i = 0; i < b.val_len; ++i) b.val[i] = (v >> (i * 8)) & 0xFF; \
+    if (v < 0) b.sign = S_NEGATIVE; \
     return b;
 
 bigint_t bg_new64(int64_t x) { __IMPL_BG(int64_t, x); }

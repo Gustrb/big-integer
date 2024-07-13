@@ -11,6 +11,11 @@ typedef struct {
     enum {
         M_ZERO = 1
     } special;
+
+    enum {
+        S_POSITIVE,
+        S_NEGATIVE,        
+    } sign;
 } bigint_t;
 
 bigint_t bg_new64(int64_t x);

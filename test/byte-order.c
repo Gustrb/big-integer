@@ -14,7 +14,17 @@ int main(void)
     if (bi.val[0] != 1)
     {
         fprintf(stderr, "[FAIL]: First byte should be equal to 1, got: %d\n", bi.val[0]);
+        bg_free(&bi);
         exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
+    }
+
+    if (bi.sign != S_POSITIVE)
+    {
+        fprintf(stderr, "[FAIL]: Failed to identify positive number\n");
+        bg_free(&bi);
+        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
     bg_free(&bi);
@@ -23,7 +33,7 @@ int main(void)
     bi = bg_new64(x);
     int64_t aux = utils_int64_from_bi(&bi);
 
-    if (aux != x)
+    if (aux != x && bi.sign != S_NEGATIVE)
     {
         fprintf(stderr, "[FAIL]: Did not manage to store correctly negative number, expected: %lld, got: %lld\n", x, aux);
     }

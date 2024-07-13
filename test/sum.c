@@ -4,14 +4,13 @@
 #include "../src/bigint.h"
 #include "utils.h"
 
-bigint_t CLEANUP[10] = {0};
-size_t num_of_clean = 0;
-
 #define __FAIL \
          __cleanup(); \
         exit(EXIT_FAILURE); \
         return EXIT_FAILURE; \
 
+static bigint_t CLEANUP[100] = {0};
+static size_t num_of_clean = 0;
 
 static inline void __push_to_cleanup(bigint_t *b)
 {
