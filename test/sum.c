@@ -97,12 +97,56 @@ static void simple_addition_case(void)
     }
 }
 
+static void addition_with_negative_numbers(void)
+{
+    bigint_t x = bg_new64(2);
+    __push_to_cleanup(&x);
+    bigint_t y = bg_new64(-1);
+    __push_to_cleanup(&y);
+
+    bigint_t res = bg_add(&x, &y);
+    int64_t v = utils_int64_from_bi(&res);
+    bg_free(&res);
+    if (v != 1)
+    {
+        fprintf(stderr, "[FAIL]: Adding -1 to 2 should equal 1, got: %lld\n", v);
+        __FAIL;
+    }
+
+    x = bg_new64(-20);
+    __push_to_cleanup(&x);
+
+    res = bg_add(&x, &y);
+    v = utils_int64_from_bi(&res);
+    bg_free(&res);
+    if (v != -21)
+    {
+        fprintf(stderr, "[FAIL]: Adding -1 to -20 should equal -21, got: %lld\n", v);
+        __FAIL;
+    }
+
+    x = bg_new64(0);
+    __push_to_cleanup(&x);
+    y = bg_new64(-255);
+    __push_to_cleanup(&y);
+
+    res = bg_add(&x, &y);
+    v = utils_int64_from_bi(&res);
+    bg_free(&res);
+    if (v != -255)
+    {
+        fprintf(stderr, "[FAIL]: Adding -255 to 0 should equal -255, got: %lld\n", v);
+        __FAIL;
+    }
+}
+
 int main(void)
 {
     fprintf(stdout, "[TEST]: Running sum.c\n");
 
     zero_addition_case();
     simple_addition_case();
+    addition_with_negative_numbers();
 
     fprintf(stdout, "[TEST]: sum.c... Ok\n");
     __cleanup();
