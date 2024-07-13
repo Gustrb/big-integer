@@ -34,6 +34,12 @@ bigint_t bg_newu8(uint8_t x);
 */
 bigint_t bg_add(bigint_t *a, bigint_t *b);
 
+/**
+ * Creates a new big integer cointaining the subtraction of b from a
+ * The returned value is not owned, therefore it must be freed by the caller
+*/
+bigint_t bg_sub(bigint_t *a, bigint_t *b);
+
 void bg_free(bigint_t *);
 
 #endif

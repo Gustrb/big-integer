@@ -12,6 +12,7 @@
     } \
     b.val_len = sizeof(type); \
     b.val = malloc(b.val_len * sizeof(uint8_t)); \
+    memset(b.val, 0, b.val_len); \
     for (size_t i = 0; i < b.val_len; ++i) b.val[i] = (v >> (i * 8)) & 0xFF; \
     if (v < 0) b.sign = S_NEGATIVE; \
     return b;
@@ -92,6 +93,78 @@ bigint_t bg_add(bigint_t *a, bigint_t *b)
     if (carry) res.val[res.val_len - 1] = carry;
     // No carry, so we don't need the extra byte
     else res.val_len -= 1;
+
+    return res;
+}
+
+bigint_t bg_sub(bigint_t *a, bigint_t *b)
+{
+    bigint_t res = {0};
+
+    // Handle special cases
+    // 0 - 0 = 0
+    if (a->special == M_ZERO && b->special == M_ZERO)
+    {
+        res.special = M_ZERO;
+        return res;
+    }
+    // 0 - b = -b
+    else if (a->special == M_ZERO)
+    {
+        res.val_len = b->val_len;
+        res.val = malloc(res.val_len);
+        for (size_t i = 0; i < b->val_len; ++i)
+        {
+            res.val[i] = ~b->val[i];
+        }
+        // Add 1 to the result to complete two's complement negation
+        uint8_t carry = 1;
+        for (size_t i = 0; i < res.val_len; ++i)
+        {
+            uint16_t sum = res.val[i] + carry;
+            res.val[i] = sum & 0xFF;
+            carry = (sum >> 8) & 0xFF;
+            if (carry == 0) break;
+        }
+        return res;
+    }
+    // a - 0 = a
+    else if (b->special == M_ZERO)
+    {
+        res.val_len = a->val_len;
+        res.val = malloc(res.val_len);
+        memcpy(res.val, a->val, a->val_len);
+        return res;
+    }
+
+    // Determine the size of the result
+    res.val_len = a->val_len > b->val_len ? a->val_len : b->val_len;
+    res.val = malloc(res.val_len);
+    memset(res.val, 0, res.val_len);
+
+    uint8_t borrow = 0;
+    for (size_t i = 0; i < res.val_len; ++i)
+    {
+        int16_t a_val = i < a->val_len ? a->val[i] : 0;
+        int16_t b_val = i < b->val_len ? b->val[i] : 0;
+        int16_t diff = a_val - b_val - borrow;
+        if (diff < 0)
+        {
+            diff += 256;
+            borrow = 1;
+        }
+        else
+        {
+            borrow = 0;
+        }
+        res.val[i] = diff & 0xFF;
+    }
+
+    // Remove leading zeros
+    while (res.val_len > 1 && res.val[res.val_len - 1] == 0)
+    {
+        res.val_len--;
+    }
 
     return res;
 }

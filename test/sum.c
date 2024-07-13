@@ -4,33 +4,15 @@
 #include "../src/bigint.h"
 #include "utils.h"
 
-#define __FAIL \
-         __cleanup(); \
-        exit(EXIT_FAILURE); \
-        return; \
-
 static bigint_t CLEANUP[100] = {0};
 static size_t num_of_clean = 0;
-
-static inline void __push_to_cleanup(bigint_t *b)
-{
-    CLEANUP[num_of_clean++] = *b;
-}
-
-static inline void __cleanup(void)
-{
-    for (size_t i = 0; i < num_of_clean; ++i)
-    {
-        bg_free(&CLEANUP[i]);
-    }
-}
 
 static void zero_addition_case(void)
 {
     bigint_t zero = bg_new64(0);
-    __push_to_cleanup(&zero);
+    PUSH_TO_CLEANUP(&zero);
     bigint_t x = bg_new64(10);
-    __push_to_cleanup(&x);
+    PUSH_TO_CLEANUP(&x);
 
     bigint_t res;
     int64_t v;
@@ -55,7 +37,6 @@ static void zero_addition_case(void)
         __FAIL;
     }
 
-
     res = bg_add(&zero, &zero);
     v = utils_int64_from_bi(&res);
     bg_free(&res);
@@ -69,7 +50,7 @@ static void zero_addition_case(void)
 static void simple_addition_case(void)
 {
     bigint_t x = bg_new64(10);
-    __push_to_cleanup(&x);
+    PUSH_TO_CLEANUP(&x);
 
     bigint_t res = bg_add(&x, &x);
     int64_t v = utils_int64_from_bi(&res);
@@ -83,9 +64,9 @@ static void simple_addition_case(void)
 
 
     bigint_t byte = bg_newu8(255);
-    __push_to_cleanup(&byte);
+    PUSH_TO_CLEANUP(&byte);
     bigint_t one = bg_new8(1);
-    __push_to_cleanup(&one);
+    PUSH_TO_CLEANUP(&one);
 
     res = bg_add(&byte, &one);
     v = utils_int64_from_bi(&res);
@@ -100,9 +81,9 @@ static void simple_addition_case(void)
 static void addition_with_negative_numbers(void)
 {
     bigint_t x = bg_new64(2);
-    __push_to_cleanup(&x);
+    PUSH_TO_CLEANUP(&x);
     bigint_t y = bg_new64(-1);
-    __push_to_cleanup(&y);
+    PUSH_TO_CLEANUP(&y);
 
     bigint_t res = bg_add(&x, &y);
     int64_t v = utils_int64_from_bi(&res);
@@ -114,7 +95,7 @@ static void addition_with_negative_numbers(void)
     }
 
     x = bg_new64(-20);
-    __push_to_cleanup(&x);
+    PUSH_TO_CLEANUP(&x);
 
     res = bg_add(&x, &y);
     v = utils_int64_from_bi(&res);
@@ -126,9 +107,9 @@ static void addition_with_negative_numbers(void)
     }
 
     x = bg_new64(0);
-    __push_to_cleanup(&x);
+    PUSH_TO_CLEANUP(&x);
     y = bg_new64(-255);
-    __push_to_cleanup(&y);
+    PUSH_TO_CLEANUP(&y);
 
     res = bg_add(&x, &y);
     v = utils_int64_from_bi(&res);
@@ -149,8 +130,6 @@ int main(void)
     addition_with_negative_numbers();
 
     fprintf(stdout, "[TEST]: sum.c... Ok\n");
-    __cleanup();
+    DO_CLEANUP;
     return 0;
 }
-
-#undef __FAIL

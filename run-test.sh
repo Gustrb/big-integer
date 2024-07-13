@@ -17,12 +17,11 @@ echo "Finished building test library. Object file dumped to $TEST_LIB"
 echo 'Building test cases...'
 gcc test/byte-order.c -o bin/byteorder $LIB $TEST_LIB $FLAGS
 gcc test/sum.c -o bin/sum $LIB $TEST_LIB $FLAGS
-
-# Add more test cases...
-
+gcc test/sub.c -o bin/sub $LIB $TEST_LIB $FLAGS
 echo 'Finished building all test cases'
 
 echo 'Running tests...'
 ./bin/byteorder
 ./bin/sum
+./bin/sub
 echo 'All tests ran :P'
